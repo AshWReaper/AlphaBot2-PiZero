@@ -4,7 +4,7 @@
 
 import os, struct, array, traceback, time
 from fcntl import ioctl
-from Motors import DCMotors # import driver for the DC Motors (DCmotors.py) 
+from DCMotors import DCMotors # import driver for the DC Motors (DCmotors.py) 
 
 class PS4C_LJS():
 
@@ -143,6 +143,9 @@ class PS4C_LJS():
             print(('%d buttons found: %s' % (num_buttons, ', '.join(button_map))))
 
 
+            ## Init the DCmotors class
+            dcm = DCMotors()
+            
             # Main event loop
             while True:
                 evbuf = jsdev.read(8)
@@ -167,6 +170,31 @@ class PS4C_LJS():
                             fvalue = value / 32767.0
                             axis_states[axis] = fvalue
                             print(("%s: %.3f" % (axis, fvalue)))
+
+                            ## DC Motor movement control
+                            # forward
+                            if axis == "y" && fvalue <= "-0.1":
+                                dcm.forward()
+                            elif axis == "y" && fvalue == "0":
+                                dcm.stop()
+
+                            # backward
+                            if axis == "y" && fvalue >= "0.1":
+                                dcm.backward()
+                            elif axis == "y" && fvalue == "0":
+                                dcm.stop()
+
+                            # left
+                            if axis == "x" && fvalue <= "-0.1":
+                                dcm.left()
+                            elif axis == "x" && fvalue == "0":
+                                dcm.stop()
+
+                            # right
+                            if axis == "x" && fvalue <= "0.1":
+                                dcm.right()
+                            elif axis == "x" && fvalue == "0":
+                                dcm.stop()
                             
         except KeyboardInterrupt:
             print("Program stopped by user...")
