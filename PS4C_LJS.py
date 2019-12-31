@@ -2,16 +2,6 @@
 # Based on information from:
 # https://www.kernel.org/doc/Documentation/input/joystick-api.txt
 
-
-
-#
-#
-# NOTE: this does not work as jsdev needs to be a global variable...
-# perhaps we should store it in somethink like self.JSDEV instead?
-# this way, we can carry the variable value to other methods within this class...
-#
-#
-
 import os, struct, array, traceback
 from fcntl import ioctl
 
@@ -151,19 +141,6 @@ class PS4C_LJS():
             print(('%d axes found: %s' % (num_axes, ', '.join(axis_map))))
             print(('%d buttons found: %s' % (num_buttons, ', '.join(button_map))))
 
-        except KeyboardInterrupt:
-            print("Program stopped by user...")
-
-        except Exception:
-            print(2)
-            traceback.print_exc()
-            
-        finally:
-            print("Setup process complete")
-
-    def main_loop(self):
-
-        try:
 
             # Main event loop
             while True:
@@ -189,17 +166,16 @@ class PS4C_LJS():
                             fvalue = value / 32767.0
                             axis_states[axis] = fvalue
                             print(("%s: %.3f" % (axis, fvalue)))
-
+                            
         except KeyboardInterrupt:
             print("Program stopped by user...")
 
         except Exception:
-            print("Something bad happened during the main_loop method... Stopping program now")
+            print(2)
             traceback.print_exc()
-                
+            
         finally:
-            print("Program finished... Thanks for playing! ^_^")
-                    
+            print("Setup process complete")
 
 if __name__ == '__main__':
 
@@ -211,9 +187,7 @@ if __name__ == '__main__':
 
         print("Running setup method for controller")
         PS4C.setup()
-
         print("Starting 'main loop' now...")
-        PS4C.main_loop()
         
     except Exception:
         print("Something crappy happened!")
@@ -221,4 +195,3 @@ if __name__ == '__main__':
 
     finally:
         print("Ending Test Now...")
-    
