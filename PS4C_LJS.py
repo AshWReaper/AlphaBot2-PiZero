@@ -8,6 +8,9 @@ from DCMotors import DCMotors # import driver for the DC Motors (DCmotors.py)
 
 class PS4C_LJS():
 
+    def __init__(self,debug=True):
+        self.DEBUG=debug
+
     def setup(self):
         
         try:
@@ -100,7 +103,8 @@ class PS4C_LJS():
                     
             # Open the joystick device.
             fn = '/dev/input/js0'
-            print(('Opening %s...' % fn))
+            if self.DEBUG==True:
+                print(('Opening %s...' % fn))
             jsdev = open(fn, 'rb')
             
             # Get the device name.
@@ -108,7 +112,8 @@ class PS4C_LJS():
             buf = array.array('B', [0] * 64)
             ioctl(jsdev, 0x80006a13 + (0x10000 * len(buf)), buf) # JSIOCGNAME(len)
             js_name = buf.tostring().rstrip(b'\x00').decode('utf-8')
-            print(('Device name: %s' % js_name))
+            if self.DEBUG==True:
+                print(('Device name: %s' % js_name))
                     
             # Get number of axes and buttons.
             buf = array.array('B', [0])
@@ -139,11 +144,14 @@ class PS4C_LJS():
 
 
             # Print out the values
-            print(('%d axes found: %s' % (num_axes, ', '.join(axis_map))))
-            print(('%d buttons found: %s' % (num_buttons, ', '.join(button_map))))
+            if self.DEBUG==True:
+                print(('%d axes found: %s' % (num_axes, ', '.join(axis_map))))
+                print(('%d buttons found: %s' % (num_buttons, ', '.join(button_map))))
 
 
             ## Init the DCmotors class
+            if self.DEBUG==True:
+                print("Creating New DC Motor Class...")
             dcm = DCMotors()
             
             # Main event loop
@@ -153,89 +161,99 @@ class PS4C_LJS():
                     time, value, type, number = struct.unpack('IhBB', evbuf)
                             
                     if type & 0x80:
-                        print("(initial)")
+                        if self.DEBUG==True:
+                            print("(initial)")
                                 
                     if type & 0x01:
                         button = button_map[number]
                         if button:
                             button_states[button] = value
                             if value:
-                                print(("%s pressed" % (button)))
+                                if self.DEBUG==True:
+                                    print(("%s pressed" % (button)))
                             else:
-                                print(("%s released" % (button)))
+                                if self.DEBUG==True:
+                                    print(("%s released" % (button)))
 
                             if button == "x":
-                                #dcm.stop()
-                                print("Emergency Break Applied!")
+                               print("X Pushed... (printed as an example of how to access a button... Makes sense if you find this line in the code that I wrote ^_^)")
                                         
                     if type & 0x02:
                         axis = axis_map[number]
                         if axis:
                             fvalue = value / 32767.0
                             axis_states[axis] = fvalue
-                            print(("%s: %.3f" % (axis, fvalue)))
-
-                            print("check it out:")
-                            print(fvalue)
+                            if self.DEBUG==True:
+                                print(("%s: %.3f" % (axis, fvalue)))
 
                             ## DC Motor movement control
                             # forward
-                            if axis == "y" and fvalue < -0.500:
+                            if axis == "y" and fvalue < -0.250:
                                 dcm.forward()
-                                print("Moving Forward...")
+                                if self.DEBUG==True:
+                                    print("Moving Forward...")
                             elif axis == "y" and fvalue == 0:
                                 dcm.stop()
-                                print("Stopping...")
+                                if self.DEBUG==True:
+                                    print("Stopping...")
 
                             # backward
-                            elif axis == "y" and fvalue > 0.500:
+                            elif axis == "y" and fvalue > 0.250:
                                 dcm.backward()
-                                print("Moving Backward...")
+                                if self.DEBUG==True:
+                                    print("Moving Backward...")
                             elif axis == "y" and fvalue == 0:
                                 dcm.stop()
-                                print("Stopping...")
+                                if self.DEBUG==True:
+                                    print("Stopping...")
 
                             # left
-                            elif axis == "x" and fvalue < -0.500:
+                            elif axis == "x" and fvalue < -0.250:
                                 dcm.left()
-                                print("Turning Left")
+                                if self.DEBUG==True:
+                                    print("Turning Left")
                             elif axis == "x" and fvalue == 0:
                                 dcm.stop()
-                                print("Stopping...")
+                                if self.DEBUG==True:
+                                    print("Stopping...")
                                 
                             # right
-                            elif axis == "x" and fvalue > 0.500:
+                            elif axis == "x" and fvalue > 0.250:
                                 dcm.right()
-                                print("Turning Right")
+                                if self.DEBUG==True:
+                                    print("Turning Right")
                             elif axis == "x" and fvalue == 0:
                                 dcm.stop()
-                                print("Stopping...")
+                                if self.DEBUG==True:
+                                    print("Stopping...")
                             
         except KeyboardInterrupt:
             print("Program stopped by user...")
 
         except Exception:
-            print(2)
             traceback.print_exc()
             
         finally:
-            print("Setup process complete")
+            if self.DEBUG==True:
+                print("Setup process complete")
 
 if __name__ == '__main__':
 
     print("Starting Test Now...")
 
     try:
+        
         print("Creating Controller Instance")
         PS4C=PS4C_LJS()
 
+        
         print("Running setup method for controller")
-        PS4C.setup()
         print("Starting 'main loop' now...")
+        PS4C.setup()
         
     except Exception:
         print("Something crappy happened!")
         traceback.print_exc()
 
     finally:
-        print("Ending Test Now...")
+        print("Ending PS4 Controller Program Now...")
