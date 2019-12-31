@@ -1,0 +1,116 @@
+/************************************************
+ * GPIO PIN ALLOCATIONS FOR MATILDA (AlphaBot2) *
+ ************************************************/
+
+---- !NB! ---- the mode must be set to BCM ie. GPIO.setmode(GPIO.BCM) for the values below to remain applicable
+
+**********
+* WHEELS *
+**********
+* GPIO must be set to output
+*****************************
+
+LEFT WHEEL
+----------
+12 (positive)
+13 (negitive)
+
+RIGHT WHEEL
+-----------
+20 (positive)
+21 (negative)
+
+*******************
+* Joystic Buttons *
+*******************
+* GPIO must be set to input
+****************************
+
+CENTER
+------
+7
+
+UP
+--
+8
+
+RIGHT
+-----
+9
+
+LEFT
+----
+10
+
+DOWN
+----
+11
+
+**********
+* BUZZER *
+**********
+* GPIO must be set to output
+*****************************
+
+BUZZER
+------
+4
+
+***************************************
+* Infrared Obstacle Avoidance Sensors *
+***************************************
+* GPIO must be set to input | GPIO.PUD_UP
+*****************************************
+
+*********
+* RIGHT *
+*********
+16
+
+********
+* LEFT *
+********
+19
+
+***************************
+* Ultrasonic Ranging Unit *
+***************************
+* GPIO must be set to output for the trigger (sending out sound) and input for the echo (receiving sound)
+***************************
+
+***********************
+* TRIGGER | SOUND OUT *
+***********************
+22
+
+*******************
+* ECHO | SOUND IN *
+*******************
+27
+
+*****************************************************************************************************************
+
+*********************************************
+* PS4 CONTROLLER | USING LINUX JOYSTICK API *
+*********************************************
+
+ - The device (PS4 Controller) must be paired with the Raspberry Pi via bluetooth
+ - The device must be added to the 'trusted devices' list on the Raspberry Pi
+ -- current device's (PS4 Controller) MAC address: 84:17:66:59:38:11
+
+Usefull Output From js_linux.py
+--------------------------------
+@raspberrypi:~/Matilda/python $ sudo python js_linux.py
+Available devices:
+  /dev/input/js0
+Opening /dev/input/js0...
+Device name: Wireless Controller
+8 axes found: x, y, z, rx, ry, rz, hat0x, hat0y
+13 buttons found: a, b, x, y, tl, tr, tl2, tr2, select, start, mode, thumbl, thumbr
+
+
+****************************************************************
+* INPUT MAPPING (BUTTONS, ANALOGUES..... & OTHER SERIOUS SHIT) *
+****************************************************************
+
+PlayStation Button (Center Of)
