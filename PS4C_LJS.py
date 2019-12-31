@@ -163,6 +163,10 @@ class PS4C_LJS():
                                 print(("%s pressed" % (button)))
                             else:
                                 print(("%s released" % (button)))
+
+                            if button == "x":
+                                #dcm.stop()
+                                print("Emergency Break Applied!")
                                         
                     if type & 0x02:
                         axis = axis_map[number]
@@ -171,30 +175,41 @@ class PS4C_LJS():
                             axis_states[axis] = fvalue
                             print(("%s: %.3f" % (axis, fvalue)))
 
+                            print("check it out:")
+                            print(fvalue)
+
                             ## DC Motor movement control
                             # forward
-                            if axis == "y" and fvalue <= "-0.1":
+                            if axis == "y" and fvalue < -0.500:
                                 dcm.forward()
-                            elif axis == "y" and fvalue == "0":
+                                print("Moving Forward...")
+                            elif axis == "y" and fvalue == 0:
                                 dcm.stop()
+                                print("Stopping...")
 
                             # backward
-                            if axis == "y" and fvalue >= "0.1":
+                            elif axis == "y" and fvalue > 0.500:
                                 dcm.backward()
-                            elif axis == "y" and fvalue == "0":
+                                print("Moving Backward...")
+                            elif axis == "y" and fvalue == 0:
                                 dcm.stop()
+                                print("Stopping...")
 
                             # left
-                            if axis == "x" and fvalue <= "-0.1":
+                            elif axis == "x" and fvalue < -0.500:
                                 dcm.left()
-                            elif axis == "x" and fvalue == "0":
+                                print("Turning Left")
+                            elif axis == "x" and fvalue == 0:
                                 dcm.stop()
-
+                                print("Stopping...")
+                                
                             # right
-                            if axis == "x" and fvalue <= "0.1":
+                            elif axis == "x" and fvalue > 0.500:
                                 dcm.right()
-                            elif axis == "x" and fvalue == "0":
+                                print("Turning Right")
+                            elif axis == "x" and fvalue == 0:
                                 dcm.stop()
+                                print("Stopping...")
                             
         except KeyboardInterrupt:
             print("Program stopped by user...")
