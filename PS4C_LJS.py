@@ -173,27 +173,27 @@ class PS4C_LJS():
 
                             ## DC Motor movement control
                             # forward
-                            if axis == "y" && fvalue <= "-0.1":
+                            if axis == "y" and fvalue <= "-0.1":
                                 dcm.forward()
-                            elif axis == "y" && fvalue == "0":
+                            elif axis == "y" and fvalue == "0":
                                 dcm.stop()
 
                             # backward
-                            if axis == "y" && fvalue >= "0.1":
+                            if axis == "y" and fvalue >= "0.1":
                                 dcm.backward()
-                            elif axis == "y" && fvalue == "0":
+                            elif axis == "y" and fvalue == "0":
                                 dcm.stop()
 
                             # left
-                            if axis == "x" && fvalue <= "-0.1":
+                            if axis == "x" and fvalue <= "-0.1":
                                 dcm.left()
-                            elif axis == "x" && fvalue == "0":
+                            elif axis == "x" and fvalue == "0":
                                 dcm.stop()
 
                             # right
-                            if axis == "x" && fvalue <= "0.1":
+                            if axis == "x" and fvalue <= "0.1":
                                 dcm.right()
-                            elif axis == "x" && fvalue == "0":
+                            elif axis == "x" and fvalue == "0":
                                 dcm.stop()
                             
         except KeyboardInterrupt:
