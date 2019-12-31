@@ -2,8 +2,9 @@
 # Based on information from:
 # https://www.kernel.org/doc/Documentation/input/joystick-api.txt
 
-import os, struct, array, traceback
+import os, struct, array, traceback, time
 from fcntl import ioctl
+from Motors import DCMotors # import driver for the DC Motors (DCmotors.py) 
 
 class PS4C_LJS():
 
