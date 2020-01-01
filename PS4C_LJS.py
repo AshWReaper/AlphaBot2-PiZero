@@ -5,6 +5,7 @@
 import os, struct, array, traceback, time
 from fcntl import ioctl
 from DCMotors import DCMotors # import driver for the DC Motors (DCmotors.py) 
+from PCA9685 import PCA9685 # import servo class from driver file
 
 class PS4C_LJS():
 
@@ -153,6 +154,17 @@ class PS4C_LJS():
             if self.DEBUG==True:
                 print("Creating New DC Motor Class...")
             dcm = DCMotors()
+
+            ## Init the PCA9685 class (Servo Motors)
+            if self.DEBUG==True:
+                print("Creating New Instance Of PCA9685 Class...")
+            pwm=PCA9685(0x40, debug=True) # leave these aguments as is, do not change.
+            pwm.setPWMFreq(50) #set the frequency | must be 50, do not chnage this!
+            #set the initial servo pulses, which "center" the servos before we begin
+            pwm.setServoPulse(0,1500) #horizontal | note: the channel (0) is for horizontal
+            pwm.setServoPulse(1,1500) #vertical | note: the channel (1) is for vertical
+            vslv=1500
+            hslv=1500
             
             # Main event loop
             while True:
@@ -186,8 +198,11 @@ class PS4C_LJS():
                             if self.DEBUG==True:
                                 print(("%s: %.3f" % (axis, fvalue)))
 
-                            ## DC Motor movement control
-                            # forward
+                            ####################
+                            # DC MOTOR CONTROL #
+                            ####################
+                            
+                            ## forward
                             if axis == "y" and fvalue < -0.250:
                                 dcm.forward()
                                 if self.DEBUG==True:
@@ -197,7 +212,7 @@ class PS4C_LJS():
                                 if self.DEBUG==True:
                                     print("Stopping...")
 
-                            # backward
+                            ## backward
                             elif axis == "y" and fvalue > 0.250:
                                 dcm.backward()
                                 if self.DEBUG==True:
@@ -207,7 +222,7 @@ class PS4C_LJS():
                                 if self.DEBUG==True:
                                     print("Stopping...")
 
-                            # left
+                            ## left
                             elif axis == "x" and fvalue < -0.250:
                                 dcm.left()
                                 if self.DEBUG==True:
@@ -217,7 +232,7 @@ class PS4C_LJS():
                                 if self.DEBUG==True:
                                     print("Stopping...")
                                 
-                            # right
+                            ## right
                             elif axis == "x" and fvalue > 0.250:
                                 dcm.right()
                                 if self.DEBUG==True:
@@ -226,6 +241,58 @@ class PS4C_LJS():
                                 dcm.stop()
                                 if self.DEBUG==True:
                                     print("Stopping...")
+
+                            #######################
+                            # SERVO MOTOR CONTROL #
+                            #######################
+
+                            ## up
+                            if axis == "ry" and fvalue < -0.250:
+                                # code to pan servo goes here
+
+                                if vslv > 800 and vslv < 2200: #make sure we are between a reasonable range
+                                    vslv=vslv-5 # decrement our servo pulse
+                                    
+                                    if self.DEBUG==True:
+                                        print("Panning Servo Up...")
+
+                                    pwm.setServoPulse(1,vslv)
+                                    
+                            ## down
+                            elif axis == "ry" and fvalue > 0.250:
+                                # code to pan servo goes here
+
+                                if vslv > 800 and vslv < 2200: #make sure we are between a reasonable range
+                                    vslv=vslv+5 # increment our servo pulse
+                                    
+                                    if self.DEBUG==True:
+                                        print("Panning Servo Down...")
+
+                                    pwm.setServoPulse(1,vslv)
+
+                            ## left
+                            elif axis == "rx" and fvalue < -0.250:
+                                # code to pan servo goes here
+
+                                if hslv > 800 and hslv < 2200: #make sure we are between a reasonable range
+                                    hslv=hslv-5 # decrement our servo pulse
+                                    
+                                    if self.DEBUG==True:
+                                        print("Panning Servo Left...")
+
+                                    pwm.setServoPulse(0,hslv)
+                                
+                            ## right
+                            elif axis == "rx" and fvalue > 0.250:
+                                # code to pan servo goes here
+
+                                if hslv > 800 and hslv < 2200: #make sure we are between a reasonable range
+                                    hslv=hslv+5 # increment our servo pulse
+                                    
+                                    if self.DEBUG==True:
+                                        print("Panning Servo Right...")
+
+                                    pwm.setServoPulse(0,hslv)
                             
         except KeyboardInterrupt:
             print("Program stopped by user...")

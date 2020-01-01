@@ -9,8 +9,8 @@ pwm = PCA9685(0x40, debug=True)
 pwm.setPWMFreq(50) #set the frequency
 
 #set the initial servo pulses, which "center" the servos before we begin
-pwm.setServoPulse(0,1500) #horizontal?
-pwm.setServoPulse(1,1500) #vertical?
+pwm.setServoPulse(0,1500) #horizontal
+pwm.setServoPulse(1,1500) #vertical
 
 try:
     print("moving pan head right")
