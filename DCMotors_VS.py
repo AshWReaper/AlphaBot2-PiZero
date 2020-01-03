@@ -78,22 +78,22 @@ class DCMotors(object):
 		GPIO.output(self.BIN1,GPIO.HIGH)
 		GPIO.output(self.BIN2,GPIO.LOW)
 
-        ## Set PWM for Motor A on the Y axis        
+        ## Set PWM for Motor A on the Y axis (Forward/Backard)
 	def setPWMAY(self,value):
 		self.PAY = value
 		self.PWMA.ChangeDutyCycle(self.PAY)
 
-        ## Set PWM for Motor B on the Y axis        
+        ## Set PWM for Motor B on the Y axis (Forward/Backard)        
 	def setPWMBY(self,value):
 		self.PBY = value
 		self.PWMB.ChangeDutyCycle(self.PBY)
 
-        ## Set PWM for Motor A on the X axis
+        ## Set PWM for Motor A on the X axis (Left/Right)
         def setPWMAX(self,value):
 		self.PAX = value
 		self.PWMA.ChangeDutyCycle(self.PAX)
 
-        ## Set PWM for Motor B on the X axis        
+        ## Set PWM for Motor B on the X axis (Left/Right)       
 	def setPWMBX(self,value):
 		self.PBX = value
 		self.PWMB.ChangeDutyCycle(self.PBX)
