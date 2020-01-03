@@ -4,7 +4,8 @@
 
 import os, struct, array, traceback, time
 from fcntl import ioctl
-from DCMotors import DCMotors # import driver class for the DC Motors (DCmotors.py) 
+# from DCMotors import DCMotors # import driver class for the DC Motors (DCmotors.py)
+from DCMotors_VS import DCMotors # import driver class for the DC Motors (DCmotors.py)
 from PCA9685 import PCA9685 # import servo driver class
 from Buzzer import Buzzer # impor driver class for Buzzer
 
@@ -160,6 +161,27 @@ class PS4C_LJS():
             if self.DEBUG==True:
                 print("Creating New DC Motor Class...")
             dcm = DCMotors()
+            # set speeds up here | use to set speed for DC Motors in the program
+            dcm_speed_0=0
+            dcm_speed_1=10
+            dcm_speed_2=20
+            dcm_speed_3=30
+            dcm_speed_4=40
+            dcm_speed_5=50
+            # set initial speeds here
+            dcm_initial_speed_x = dcm_speed_1 # Turning (Left/Right)
+            dcm_initial_speed_y = dcm_speed_2 # Movement (Forward/Backward)
+            # use initial speed values to set the initial Pulse Width Modulation values
+            dcm.setPWMAX(dcm_initial_speed_x) # Turning (Left Wheel)
+            dcm.setPWMBX(dcm_initial_speed_x) # Turning (Right Wheel)
+            dcm.setPWMAY(dcm_initial_speed_y) # Moving Forward/Backward (Left Wheel)
+            dcm.setPWMBY(dcm_initial_speed_y) # Moving Forward/Backward (Right Wheel)
+            # store "last known" speeds here (starts with the 'initial speed' values)
+            dcm_last_known_speed_x=dcm_initial_speed_x # Turning (Left/Right)
+            dcm_last_known_speed_y=dcm_initial_speed_y # Movement (Forward/Backward)
+            # store the "current" speeds here
+            dcm_current_speed_x=dcm_initial_speed_x # Turning (Left/Right)
+            dcm_current_speed_y=dcm_initial_speed_y # Movement (Forward/Backward)
 
             ## Init the PCA9685 class (Servo Motors)
             if self.DEBUG==True:
@@ -202,14 +224,14 @@ class PS4C_LJS():
                             ###############################################################
                             # BUTTONS [TRIANGLE, SQUARE, CROSS, CIRCLE] | MISC. FUNCTIONS #
                             ###############################################################
-
-                            ## recenter the servos (SQUARE)
                             if value:
-                                if button == "y":
-                                    
-                                    print(value)
 
-                                    print("SQUARE Pushed... Centering Servos Now ^_^)")
+                                ################################
+                                # CIRCLE | RECENTER THE SERVOS #
+                                ################################
+                                if button == "b":
+                                    
+                                    print("CIRCLE Pushed... Centering Servos Now ^_^)")
                                     # set the servo pulse to the center positions/values for the vertical and horizontal servos
                                     pwm.setServoPulse(0,1500)
                                     pwm.setServoPulse(1,1500)
@@ -217,17 +239,122 @@ class PS4C_LJS():
                                     vslv=1500
                                     hslv=1500
 
-                            ## buzzer
-                            if value:
-                                if button == "b":
+                                ##############################################
+                                # SQUARE | RESET SPEEDS | TURNING & MOVEMENT #
+                                ##############################################
+                                elif button == "y":
 
-                                    print(value)
-                                    
+                                    print("SQUARE Pushed... Resetting Speeds Now ^_^")
+                                    ## reset speed code here...
+                                    dcm.setPWMAX(dcm_initial_speed_x) # set Pulse Width Modulation For Motor A To Initial Value (Turning Speed)
+                                    dcm.setPWMBX(dcm_initial_speed_x) # set Pulse Width Modulation For Motor B To Initial Value (Turning Speed)
+                                    dcm.setPWMAY(dcm_initial_speed_y) # set Pulse Width Modulation For Motor A To Initial Value (Movement Speed)
+                                    dcm.setPWMBX(dcm_initial_speed_y) # set Pulse Width Modulation For Motor B To Initial Value (Movement Speed)
+                                    dcm_last_known_speed_x=dcm_initial_speed_x # update last known movement speed to the initial value (Turning Speed)
+                                    dcm_last_known_speed_y=dcm_initial_speed_y # update last known movement speed to the initial value (Movement Speed)
+
+                                ##########
+                                # BUZZER #
+                                ##########
+                                elif button == "x":
+
                                     print("CIRCLE Pushed... Buzzing Now ^_^")
-                                    bzr.start()
-                            else:
-                                bzr.stop()
+                                    bzr.ezbuzz()    
+
+                                ###########################################################
+                                # speed control (DC Motors) | MOVEMENT (FORWARD/BACKWARD) #
+                                ###########################################################
+
+                                ## SLOW DOWN (top left trigger)
+                                elif button == "tl":
+
+                                    print ("Top Left Trigger Pushed... Decreasing Speed now...")
+
+                                    # if speed is zero, do nothing... cant slow down any more than that can we..
+                                    if dcm_last_known_speed_y == dcm_speed_0:
+                                        print("Speed is already 0, we cant go any lower bro...")
+
+                                    # else if speed is 1, slow down to 0
+                                    elif dcm_last_known_speed_y == dcm_speed_1:
+                                        print("Slowing Down Turning Speed to: ",dcm_speed_0)
+                                        dcm.setPWMAY(dcm_speed_0)
+                                        dcm.setPWMBY(dcm_speed_0)
+                                        dcm_last_known_speed_y=dcm_speed_0 # update last known speed value to the updated one
+
+                                    # else if speed is 2, slow down to 1
+                                    elif dcm_last_known_speed_y == dcm_speed_2:
+                                        print("Slowing Down Turning Speed to: ",dcm_speed_1)
+                                        dcm.setPWMAY(dcm_speed_1)
+                                        dcm.setPWMBY(dcm_speed_1)
+                                        dcm_last_known_speed_y=dcm_speed_1 # update last known speed value to the updated one
+                                        
+                                    # else if speed is 3, slow down to 2
+                                    elif dcm_last_known_speed_y == dcm_speed_3:
+                                        print("Slowing Down Turning Speed to: ",dcm_speed_2)
+                                        dcm.setPWMAY(dcm_speed_2)
+                                        dcm.setPWMBY(dcm_speed_2)
+                                        dcm_last_known_speed_y=dcm_speed_2 # update last known speed value to the updated one
+
+                                    # else if speed is 4, slow down to 3
+                                    elif dcm_last_known_speed_y == dcm_speed_4:
+                                        print("Slowing Down Turning Speed to: ",dcm_speed_3)
+                                        dcm.setPWMAY(dcm_speed_3)
+                                        dcm.setPWMBY(dcm_speed_3)
+                                        dcm_last_known_speed_y=dcm_speed_3 # update last known speed value to the updated one
+
+                                    # else if speed is 5, slow down to 4
+                                    elif dcm_last_known_speed_y == dcm_speed_5:
+                                        print("Slowing Down Turning Speed to: ",dcm_speed_4)
+                                        dcm.setPWMAY(dcm_speed_4)
+                                        dcm.setPWMBY(dcm_speed_4)
+                                        dcm_last_known_speed_y=dcm_speed_4 # update last known speed value to the updated one
                                     
+                                ## SPEED UP (top left trigger)
+                                elif button == "tr":
+
+                                    print ("Top Right Trigger Pushed... Increasing Speed now...")
+
+                                    # if speed is 0, speed up to 1..
+                                    if dcm_last_known_speed_y == dcm_speed_0:
+                                        print("Speeding Up Turning Speed to: ",dcm_speed_1)
+                                        dcm.setPWMAY(dcm_speed_1)
+                                        dcm.setPWMBY(dcm_speed_1)
+                                        dcm_last_known_speed_y=dcm_speed_1 # update last known speed value to the updated one
+
+                                    # else if speed is 1, speed up to 2
+                                    elif dcm_last_known_speed_y == dcm_speed_1:
+                                        print("Speeding Up Turning Speed to: ",dcm_speed_2)
+                                        dcm.setPWMAY(dcm_speed_2)
+                                        dcm.setPWMBY(dcm_speed_2)
+                                        dcm_last_known_speed_y=dcm_speed_2 # update last known speed value to the updated one
+
+                                    # else if speed is 2, speed up to 3
+                                    elif dcm_last_known_speed_y == dcm_speed_2:
+                                        print("Speeding Up Turning Speed to: ",dcm_speed_3)
+                                        dcm.setPWMAY(dcm_speed_3)
+                                        dcm.setPWMBY(dcm_speed_3)
+                                        dcm_last_known_speed_y=dcm_speed_3 # update last known speed value to the updated one
+
+                                    # else if speed is 3, speed up to 4
+                                    elif dcm_last_known_speed_y == dcm_speed_3:
+                                        print("Speeding Up Turning Speed to: ",dcm_speed_4)
+                                        dcm.setPWMAY(dcm_speed_4)
+                                        dcm.setPWMBY(dcm_speed_4)
+                                        dcm_last_known_speed_y=dcm_speed_4 # update last known speed value to the updated one
+
+                                    # else if speed is 4, speed up to 5
+                                    elif dcm_last_known_speed_y == dcm_speed_4:
+                                        print("Speeding Up Turning Speed to: ",dcm_speed_5)
+                                        dcm.setPWMAY(dcm_speed_5)
+                                        dcm.setPWMBY(dcm_speed_5)
+                                        dcm_last_known_speed_y=dcm_speed_5 # update last known speed value to the updated one
+
+                                    # else if speed is 5, this is our max, so we wont go any higher...
+                                    elif dcm_last_known_speed_y == dcm_speed_5:
+                                        print("Speed is already 5, we cant go any higher bro... Maybe consider making a 'Temp Power Boost' function using a different button... L3 maybe? ;)")
+                                        
+                            else:
+                                print(("%s released" % (button))) # this gets fired EVERYTIME a button is "released"
                                         
                     if type & 0x02:
                         axis = axis_map[number]
@@ -320,6 +447,102 @@ class PS4C_LJS():
                                         print("Panning Servo Right...")
                                         print("hslv:",hslv)
                                     pwm.setServoPulse(0,hslv)
+
+                            ############################################################
+                            # HAT DIRECTIONAL BUTTONS | DC MOTOR TURNING SPEED CONTROL #
+                            ############################################################
+
+                            ### DOWN BUTTON
+                            ## SLOW DOWN
+                            if axis == "hat0y" and fvalue == 1:
+
+                                print("hat0y (UP) Pushed...")
+                                
+                                # if speed is zero, do nothing... cant slow down any more than that can we..
+                                if dcm_last_known_speed_x == dcm_speed_0:
+                                    print("Speed is already 0, we cant go any lower bro...")
+
+                                # else if speed is 1, slow down to 0
+                                elif dcm_last_known_speed_x == dcm_speed_1:
+                                    print("Slowing Down Turning Speed to: ",dcm_speed_0)
+                                    dcm.setPWMAX(dcm_speed_0)
+                                    dcm.setPWMBX(dcm_speed_0)
+                                    dcm_last_known_speed_x=dcm_speed_0 # update last known speed value to the updated one
+
+                                # else if speed is 2, slow down to 1
+                                elif dcm_last_known_speed_x == dcm_speed_2:
+                                    print("Slowing Down Turning Speed to: ",dcm_speed_1)
+                                    dcm.setPWMAX(dcm_speed_1)
+                                    dcm.setPWMBX(dcm_speed_1)
+                                    dcm_last_known_speed_x=dcm_speed_1 # update last known speed value to the updated one
+
+                                # else if speed is 3, slow down to 2
+                                elif dcm_last_known_speed_x == dcm_speed_3:
+                                    print("Slowing Down Turning Speed to: ",dcm_speed_2)
+                                    dcm.setPWMAX(dcm_speed_2)
+                                    dcm.setPWMBX(dcm_speed_2)
+                                    dcm_last_known_speed_x=dcm_speed_2 # update last known speed value to the updated one
+
+                                # else if speed is 4, slow down to 3
+                                elif dcm_last_known_speed_x == dcm_speed_4:
+                                    print("Slowing Down Turning Speed to: ",dcm_speed_3)
+                                    dcm.setPWMAX(dcm_speed_3)
+                                    dcm.setPWMBX(dcm_speed_3)
+                                    dcm_last_known_speed_x=dcm_speed_3 # update last known speed value to the updated one
+
+                                # else if speed is 5, slow down to 4
+                                elif dcm_last_known_speed_x == dcm_speed_5:
+                                    print("Slowing Down Turning Speed to: ",dcm_speed_4)
+                                    dcm.setPWMAX(dcm_speed_4)
+                                    dcm.setPWMBX(dcm_speed_4)
+                                    dcm_last_known_speed_x=dcm_speed_4 # update last known speed value to the updated one
+
+                            
+                            ### UP BUTTON
+                            ## SPEED UP
+                            elif axis == "hat0y" and fvalue == -1:
+
+                                print ("hat0y (DOWN) Pushed... Increasing Speed now...")
+
+                                # if speed is 0, speed up to 1..
+                                if dcm_last_known_speed_x == dcm_speed_0:
+                                    print("Speeding Up Turning Speed to: ",dcm_speed_1)
+                                    dcm.setPWMAX(dcm_speed_1)
+                                    dcm.setPWMBX(dcm_speed_1)
+                                    dcm_last_known_speed_x=dcm_speed_1 # update last known speed value to the updated one
+
+                                # else if speed is 1, speed up to 2
+                                elif dcm_last_known_speed_x == dcm_speed_1:
+                                    print("Speeding Up Turning Speed to: ",dcm_speed_2)
+                                    dcm.setPWMAX(dcm_speed_2)
+                                    dcm.setPWMBX(dcm_speed_2)
+                                    dcm_last_known_speed_x=dcm_speed_2 # update last known speed value to the updated one
+
+                                # else if speed is 2, speed up to 3
+                                elif dcm_last_known_speed_x == dcm_speed_2:
+                                    print("Speeding Up Turning Speed to: ",dcm_speed_3)
+                                    dcm.setPWMAX(dcm_speed_3)
+                                    dcm.setPWMBX(dcm_speed_3)
+                                    dcm_last_known_speed_x=dcm_speed_3 # update last known speed value to the updated one
+
+                                # else if speed is 3, speed up to 4
+                                elif dcm_last_known_speed_x == dcm_speed_3:
+                                    print("Speeding Up Turning Speed to: ",dcm_speed_4)
+                                    dcm.setPWMAX(dcm_speed_4)
+                                    dcm.setPWMBX(dcm_speed_4)
+                                    dcm_last_known_speed_x=dcm_speed_4 # update last known speed value to the updated one
+
+                                # else if speed is 4, speed up to 5
+                                elif dcm_last_known_speed_x == dcm_speed_4:
+                                    print("Speeding Up Turning Speed to: ",dcm_speed_5)
+                                    dcm.setPWMAX(dcm_speed_5)
+                                    dcm.setPWMBX(dcm_speed_5)
+                                    dcm_last_known_speed_x=dcm_speed_5 # update last known speed value to the updated one
+
+                                # else if speed is 5, this is our max, so we wont go any higher...
+                                elif dcm_last_known_speed_x == dcm_speed_5:
+                                    print("Speed is already 5, we cant go any higher bro... Maybe consider making a 'Temp Power Boost' function using a different button... L3 maybe? ;)")
+                                
                             
         except KeyboardInterrupt:
             print("Program stopped by user...")

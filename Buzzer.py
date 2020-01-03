@@ -7,7 +7,7 @@ import time
 Buzzer_Pin = 4
 
 # set duration for ezbuzz
-Ezbuzz_Duration = 0.8
+Ezbuzz_Duration = 0.2
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(True)
