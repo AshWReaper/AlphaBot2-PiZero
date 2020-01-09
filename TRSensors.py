@@ -185,9 +185,21 @@ class TRSensor(object):
 # Simple example prints accel/mag data once per second:
 if __name__ == '__main__':
 	TR = TRSensor()
+
 	print("TRSensor Example")
 	while True:
 		print(TR.AnalogRead())
 		time.sleep(0.2)
 
-			 
+		sensor_array_values = TR.AnalogRead()
+                print(sensor_array_values[0])
+                print(sensor_array_values[1])
+                print(sensor_array_values[2])
+                print(sensor_array_values[3])
+                print(sensor_array_values[4])
+                time.sleep(0.2)
+                
+                ## access using a loop....
+                #for i in range(0,5,1):
+                        #print(sensor_array_values[i])
+                        #time.sleep(0.2)
