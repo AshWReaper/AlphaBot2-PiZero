@@ -9,7 +9,7 @@
 import RPi.GPIO as GPIO
 
 # from AlphaBot2 import AlphaBot2
-from DCMotors_VS.py import DCMotors
+from DCMotors_VS import DCMotors
 
 from TRSensors import TRSensor
 import time
@@ -20,8 +20,10 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 GPIO.setup(Button,GPIO.IN,GPIO.PUD_UP)
 
+calibrate_turn_speed = 10;
+
 # maximum = 100;
-maximum = 30;
+maximum = 15; # SET THE MAX SPEED HERE
 integral = 0;
 last_proportional = 0;
 
@@ -37,13 +39,13 @@ time.sleep(2)
 ### STEP 2 | Calibration sequence
 for i in range(0,100):
 	if(i<25 or i>= 75):
-		Ab.right()
-		Ab.setPWMA(30)
-		Ab.setPWMB(30)
+		DCM.right()
+		DCM.setPWMAX(calibrate_turn_speed)
+		DCM.setPWMBX(calibrate_turn_speed)
 	else:
-		Ab.left()
-		Ab.setPWMA(30)
-		Ab.setPWMB(30)
+		DCM.left()
+		DCM.setPWMAX(calibrate_turn_speed)
+		DCM.setPWMBX(calibrate_turn_speed)
 	TR.calibrate()
 DCM.stop()
 print(TR.calibratedMin)
@@ -56,7 +58,7 @@ print("Waiting for onboard button to be toggled...")
 while (GPIO.input(Button) != 0):
 	position,Sensors = TR.readLine()
 	print(position,Sensors)
-	time.sleep(0.05)
+	time.sleep(2)
 DCM.forward()
 
 ### STEP 5 | Initiate "infinit loop" 
