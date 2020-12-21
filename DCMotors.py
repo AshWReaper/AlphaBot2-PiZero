@@ -39,6 +39,7 @@ class DCMotors(object):
 		GPIO.output(self.AIN2,GPIO.HIGH)
 		GPIO.output(self.BIN1,GPIO.LOW)
 		GPIO.output(self.BIN2,GPIO.HIGH)
+                return true
 
 
 	def stop(self):

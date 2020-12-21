@@ -35,6 +35,18 @@ try:
 		else:
 			dcm.forward() # move forward
 
+                        while (dcm.forward() == true)
+                        time.sleep(2)
+                        dcm.stop()
+                        dcm.left() # turn left
+                        time.sleep(0.4)
+                        dcm.right() # turn back to center(ish)
+                        time.sleep(0.4)
+                        dcm.right() # turn right
+                        time.sleep(0.4)
+                        dcm.forward()
+                        
+
 except KeyboardInterrupt:
 	GPIO.cleanup();
 
