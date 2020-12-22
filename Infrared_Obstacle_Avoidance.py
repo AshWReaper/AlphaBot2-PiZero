@@ -33,18 +33,21 @@ try:
                         time.sleep(0.4)
                 ## else if the terrain is clear....
 		else:
-			dcm.forward() # move forward
+			# dcm.forward() # move forward
 
-                        while (dcm.forward() == true)
-                        time.sleep(2)
-                        dcm.stop()
-                        dcm.left() # turn left
-                        time.sleep(0.4)
-                        dcm.right() # turn back to center(ish)
-                        time.sleep(0.4)
-                        dcm.right() # turn right
-                        time.sleep(0.4)
-                        dcm.forward()
+                        ## try add some extra movements in here while the bot is moving forward, but there must be no obsticals in sight...
+                        FWD_STATUS = dcm.forward()
+                        print(FWD_STATUS)
+                        while (FWD_STATUS == True):
+                                time.sleep(2)
+                                dcm.stop()
+                                dcm.left() # turn left
+                                time.sleep(0.4)
+                                dcm.right() # turn back to center(ish)
+                                time.sleep(0.4)
+                                dcm.right() # turn right
+                                time.sleep(0.4)
+                                dcm.forward()
                         
 
 except KeyboardInterrupt:
