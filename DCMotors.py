@@ -39,9 +39,7 @@ class DCMotors(object):
 		GPIO.output(self.AIN2,GPIO.HIGH)
 		GPIO.output(self.BIN1,GPIO.LOW)
 		GPIO.output(self.BIN2,GPIO.HIGH)
-                return True
-
-
+                
 	def stop(self):
 		self.PWMA.ChangeDutyCycle(0)
 		self.PWMB.ChangeDutyCycle(0)
@@ -106,8 +104,8 @@ class DCMotors(object):
 if __name__=='__main__':
 
         # set time limits for movements here
-        Forward_t = 1    # forwards
-        Backward_t = 1   # backards
+        Forward_t = 2    # forwards
+        Backward_t = 5   # backards
         Left_t = 0.5     # left turn
         Right_t = 0.5    # right turn
         Break__s_t = 0.2 # break (short)

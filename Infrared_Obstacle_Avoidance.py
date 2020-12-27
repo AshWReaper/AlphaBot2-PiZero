@@ -23,33 +23,39 @@ try:
         while True:
 		DR_status = GPIO.input(DR) # get the input from the right hand side sensor
 		DL_status = GPIO.input(DL) # get the input from the left hand side sensor
-
-                ## if either sensor picks up an obstacle....
-		if((DL_status == 0) or (DR_status == 0)):
+                
+                ## if the oblsicle is detected by the right-hand side sensor...
+                if((DR_status == 0) and (DL_status == 1)):
                         dcm.stop() # stop
-                        dcm.backward() # go back a bit
-                        time.sleep(0.1)
                         dcm.left() # turn left
                         time.sleep(0.4)
+                        dcm.stop() # stop
+                        
+                ## if the oblsicle is detected by the left-hand side sensor...
+                if((DL_status == 0) and (DR_status == 1)):
+                        dcm.stop() # stop
+                        dcm.right() # turn right
+                        time.sleep(0.4)
+                        dcm.stop() # stop
+                        
+                ## if the obsicle is deteted by both the left and right-hand side sensors...
+                if((DR_status == 0) and (DL_status == 0)):
+                        dcm.stop() # stop
+                        dcm.backward() # go backwards 
+                        time.sleep(3)
+                        dcm.stop() # stop
+                        dcm.left() # turn left
+                        time.sleep(0.8)
+                        dcm.stop() # stop
+                        
                 ## else if the terrain is clear....
-		else:
-			# dcm.forward() # move forward
+	        else:
+		        # dcm.forward() # move forward
 
                         ## try add some extra movements in here while the bot is moving forward, but there must be no obsticals in sight...
                         FWD_STATUS = dcm.forward()
                         print(FWD_STATUS)
-                        while (FWD_STATUS == True):
-                                time.sleep(2)
-                                dcm.stop()
-                                dcm.left() # turn left
-                                time.sleep(0.4)
-                                dcm.right() # turn back to center(ish)
-                                time.sleep(0.4)
-                                dcm.right() # turn right
-                                time.sleep(0.4)
-                                dcm.forward()
-                        
-
+                        #while (FWD_STATUS == True):
 except KeyboardInterrupt:
 	GPIO.cleanup();
 
