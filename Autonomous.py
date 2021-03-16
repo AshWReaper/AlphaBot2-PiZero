@@ -45,8 +45,11 @@ try:
                 
                 ## if the oblsicle is detected by the right-hand side sensor...
                 if((DR_status == 0) and (DL_status == 1)):
-                        DISTANCE_TRAVELED = 0;
+                        DISTANCE_TRAVELED = 0; # reset the "distance traveled counter back to zero"
                         FWD_STATUS = False # change forward status to false
+                        dcm.stop() # stop
+                        dcm.backward() # go backwards
+                        time.sleep(0.2)
                         dcm.stop() # stop
                         dcm.left() # turn left
                         time.sleep(0.4)
@@ -54,8 +57,11 @@ try:
                         
                 ## if the oblsicle is detected by the left-hand side sensor...
                 elif((DL_status == 0) and (DR_status == 1)):
-                        DISTANCE_TRAVELED = 0;
+                        DISTANCE_TRAVELED = 0; # reset the "distance traveled counter back to zero"
                         FWD_STATUS = False # change forward status to false
+                        dcm.stop() # stop
+                        dcm.backward() # go backwards
+                        time.sleep(0.2)
                         dcm.stop() # stop
                         dcm.right() # turn right
                         time.sleep(0.4)
@@ -63,14 +69,14 @@ try:
                         
                 ## if the obsicle is deteted by both the left and right-hand side sensors...
                 elif((DR_status == 0) and (DL_status == 0)):
-                        DISTANCE_TRAVELED = 0;
+                        DISTANCE_TRAVELED = 0; # reset the "distance traveled counter back to zero"
                         FWD_STATUS = False # change forward status to false
                         dcm.stop() # stop
                         dcm.backward() # go backwards 
-                        time.sleep(3)
+                        time.sleep(1)
                         dcm.stop() # stop
                         dcm.left() # turn left
-                        time.sleep(0.8)
+                        time.sleep(0.5)
                         dcm.stop() # stop
                         
                 ## else if the terrain is clear....
@@ -89,19 +95,19 @@ try:
                                 print("doing something else with intent") ## wierdly... this never seemes to trigger... try figure out why?
 
                         ## Trigger every time the bot goes a certain distance forward with no obstruciotns
-                        if((DISTANCE_TRAVELED % 3000) == 0):
+                        if((DISTANCE_TRAVELED % 2000) == 0):
                                 dcm.stop()
-                                time.sleep(3)
+                                time.sleep(1)
                                 dcm.left()
+                                time.sleep(0.2)
+                                dcm.stop()
+                                time.sleep(0.5)
+                                dcm.right()
                                 time.sleep(0.4)
                                 dcm.stop()
-                                time.sleep(1)
-                                dcm.right()
-                                time.sleep(0.8)
-                                dcm.stop()
-                                time.sleep(1)
+                                time.sleep(0.5)
 
-                        elif((DISTANCE_TRAVELED % 5000) == 0):
+                        elif((DISTANCE_TRAVELED % 3000) == 0):
                                 dcm.stop()
 
                                 try:

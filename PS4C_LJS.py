@@ -253,17 +253,17 @@ class PS4C_LJS():
                                     dcm_last_known_speed_x=dcm_initial_speed_x # update last known movement speed to the initial value (Turning Speed)
                                     dcm_last_known_speed_y=dcm_initial_speed_y # update last known movement speed to the initial value (Movement Speed)
 
-                                ##########
-                                # BUZZER #
-                                ##########
+                                #####################
+                                # TRIANGLE | BUZZER #
+                                #####################
                                 elif button == "x":
 
-                                    print("CIRCLE Pushed... Buzzing Now ^_^")
-                                    bzr.ezbuzz()    
+                                    print("TRIANGLE Pushed... Buzzing Now ^_^")
+                                    bzr.ezbuzz() 
 
-                                ###########################################################
-                                # speed control (DC Motors) | MOVEMENT (FORWARD/BACKWARD) #
-                                ###########################################################
+                                #############################################################
+                                ## speed control (DC Motors) | MOVEMENT (FORWARD/BACKWARD) ##
+                                #############################################################
 
                                 ## SLOW DOWN (top left trigger)
                                 elif button == "tl":
