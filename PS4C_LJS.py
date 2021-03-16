@@ -2,6 +2,8 @@
 # Based on information from:
 # https://www.kernel.org/doc/Documentation/input/joystick-api.txt
 
+## Modified to work with AlphaBot PiZero :)
+
 import os, struct, array, traceback, time
 from fcntl import ioctl
 # from DCMotors import DCMotors # import driver class for the DC Motors (DCmotors.py)
